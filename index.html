@@ -1509,7 +1509,7 @@
     <div class="card__header">
       <div>
         <div class="card__logo">
-          <img src="friosur-logo.svg" alt="Logo Friosur" class="logo-img">
+          <img src="nuevo logo Azul.JPG" alt="Logo Friosur" class="logo-img">
         </div>
         <div class="card__pages">Página 1 de 1</div>
       </div>
@@ -1831,8 +1831,13 @@
     function actualizarLogoSegunTema(themeId) {
       const logoImg = document.querySelector(".logo-img");
       if (!logoImg) return;
-      // El SVG usa currentColor y se adapta automáticamente al tema
-      logoImg.src = "friosur-logo.svg";
+      // Usar logo real del repositorio según el tema
+      const temasOscuros = ["dark", "midnight", "royal", "grape"];
+      if (temasOscuros.includes(themeId)) {
+        logoImg.src = "nuevo logo Blanco.JPG";
+      } else {
+        logoImg.src = "nuevo logo Azul.JPG";
+      }
     }
 
     function renderThemeButtons() {
