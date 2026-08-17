@@ -1,17 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <!-- Fondo redondeado -->
-  <rect x="10" y="10" width="180" height="180" rx="40" fill="url(#grad)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
+  <!-- Logo Adapta con fondo transparente -->
   <!-- Letra A estilizada -->
-  <path d="M100 45 L145 155 H125 L115 130 H85 L75 155 H55 Z" fill="#ffffff"/>
-  <path d="M100 75 L90 105 H110 Z" fill="#6366f1"/>
+  <path d="M20 5 L55 55 H45 L38 40 H12 L5 55 H-5 Z" fill="currentColor"/>
+  <path d="M25 30 L20 20 L15 30 Z" fill="transparent"/>
   <!-- Punto de acento -->
-  <circle cx="155" cy="55" r="10" fill="#f97316"/>
+  <circle cx="65" cy="15" r="6" fill="#f97316"/>
   <!-- Texto ADAPTA -->
-  <text x="100" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" letter-spacing="4">ADAPTA</text>
+  <text x="80" y="42" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="currentColor" letter-spacing="3">ADAPTA</text>
 </svg>

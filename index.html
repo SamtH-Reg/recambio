@@ -310,14 +310,15 @@
     }
 
     .card__logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: var(--primary);
-      color: var(--on-primary);
+      width: 100%;
+      max-width: 160px;
+      height: auto;
+      border-radius: 0;
+      background: transparent;
+      color: var(--text);
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       font-weight: 700;
       font-size: 18px;
       letter-spacing: 0.02em;
@@ -1492,7 +1493,11 @@
     <div class="card__header">
       <div>
         <div class="card__logo">
-          <img src="nuevo logo Azul.JPG" alt="Logo Adapta" width="48" height="48" style="border-radius: 14px; object-fit: cover;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36" style="display:block;">
+            <path d="M20 5 L55 55 H45 L38 40 H12 L5 55 H-5 Z" fill="currentColor"/>
+            <circle cx="65" cy="15" r="6" fill="#f97316"/>
+            <text x="80" y="42" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="currentColor" letter-spacing="3">ADAPTA</text>
+          </svg>
         </div>
         <div class="card__pages">Página 1 de 1</div>
       </div>
