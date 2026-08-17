@@ -331,6 +331,14 @@
       height: auto;
       object-fit: contain;
       display: block;
+      mix-blend-mode: multiply;
+    }
+
+    :root[data-theme="dark"] .logo-img,
+    :root[data-theme="midnight"] .logo-img,
+    :root[data-theme="royal"] .logo-img,
+    :root[data-theme="grape"] .logo-img {
+      mix-blend-mode: screen;
     }
 
     .card__pages {
