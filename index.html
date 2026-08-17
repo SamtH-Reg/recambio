@@ -1816,6 +1816,20 @@
       document.querySelectorAll(".theme-btn").forEach(function (btn) {
         btn.classList.toggle("active", btn.getAttribute("data-theme") === id);
       });
+      // Cambiar logo según el tema
+      actualizarLogoSegunTema(id);
+    }
+
+    function actualizarLogoSegunTema(themeId) {
+      const logoImg = document.querySelector(".logo-img");
+      if (!logoImg) return;
+      // Temas oscuros usan logo blanco, temas claros usan logo azul
+      const temasOscuros = ["dark", "midnight", "royal", "grape"];
+      if (temasOscuros.includes(themeId)) {
+        logoImg.src = "nuevo logo Blanco.JPG";
+      } else {
+        logoImg.src = "nuevo logo Azul.JPG";
+      }
     }
 
     function renderThemeButtons() {
