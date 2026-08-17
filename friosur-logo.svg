@@ -1,29 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" width="400" height="280">
-  <!-- Icono de grúa portuaria con barco - forma fiel al logo original -->
+  <!-- Icono geométrico abstracto fiel al logo original de FRIOSUR -->
   <g fill="currentColor">
-    <!-- Estructura principal de la grúa -->
-    <path d="M60 30 L100 30 L120 70 L140 70 L140 110 L120 110 L100 90 L80 90 L60 110 L40 110 L40 70 L60 30 Z"/>
-    <!-- Base de la grúa -->
-    <path d="M80 110 L120 110 L130 130 L70 130 Z"/>
-    <!-- Barco -->
-    <rect x="90" y="130" width="20" height="12"/>
-    <path d="M110 130 L130 130 L135 142 L105 142 Z"/>
-    <!-- Contenedor del barco -->
-    <rect x="95" y="125" width="10" height="5"/>
+    <!-- Forma principal del icono - estructura geométrica angular -->
+    <path d="M30 20 L70 20 L90 50 L110 50 L110 90 L90 90 L70 70 L50 70 L30 90 L10 90 L10 50 L30 20 Z"/>
+    <!-- Base del icono -->
+    <path d="M50 90 L90 90 L100 110 L40 110 Z"/>
   </g>
   
-  <!-- Texto FRIOSUR - fuente bold sans-serif fiel al original -->
-  <text x="200" y="195" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="52" font-weight="900" fill="currentColor" letter-spacing="6">FRIOSUR</text>
+  <!-- Texto FRIOSUR - fuente bold sans-serif -->
+  <text x="200" y="175" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="52" font-weight="900" fill="currentColor" letter-spacing="6">FRIOSUR</text>
   
-  <!-- Texto AYSEN con icono de brújula -->
-  <text x="155" y="235" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="currentColor" letter-spacing="4">AYSEN</text>
+  <!-- Texto AYSEN -->
+  <text x="155" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="currentColor" letter-spacing="4">AYSEN</text>
   
-  <!-- Icono de brújula -->
-  <circle cx="200" cy="231" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
-  <path d="M200 224 L202 229 L200 231 L198 229 Z" fill="currentColor"/>
-  <path d="M200 238 L202 233 L200 231 L198 233 Z" fill="currentColor"/>
-  <text x="200" y="234" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="currentColor">A</text>
+  <!-- Icono de brújula circular -->
+  <circle cx="200" cy="216" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M200 209 L202 214 L200 216 L198 214 Z" fill="currentColor"/>
+  <path d="M200 223 L202 218 L200 216 L198 218 Z" fill="currentColor"/>
+  <text x="200" y="219" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="currentColor">A</text>
   
   <!-- Texto PATAGONIA -->
-  <text x="245" y="235" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="currentColor" letter-spacing="4">PATAGONIA</text>
+  <text x="245" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="currentColor" letter-spacing="4">PATAGONIA</text>
 </svg>
