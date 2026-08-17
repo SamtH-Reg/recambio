@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" width="400" height="280">
+  <!-- Icono de grúa/barco -->
+  <path d="M80 40 L120 40 L140 80 L160 80 L160 120 L140 120 L120 100 L100 100 L80 120 L60 120 L60 80 L80 40 Z" fill="currentColor" opacity="0.9"/>
+  <path d="M100 120 L140 120 L150 140 L90 140 Z" fill="currentColor" opacity="0.9"/>
+  <rect x="110" y="140" width="20" height="15" fill="currentColor" opacity="0.9"/>
+  <path d="M130 140 L150 140 L155 150 L125 150 Z" fill="currentColor" opacity="0.9"/>
+  
+  <!-- Texto FRIOSUR -->
+  <text x="200" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="currentColor" letter-spacing="4">FRIOSUR</text>
+  
+  <!-- Texto AYSEN PATAGONIA -->
+  <text x="200" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="currentColor" letter-spacing="6">AYSEN</text>
+  <circle cx="200" cy="237" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="200" y="241" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="currentColor">A</text>
+  <text x="200" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="currentColor" letter-spacing="6">PATAGONIA</text>
+</svg>
