@@ -7,6 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Solicitud de Recambio · Friosur</title>
+  <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js"></script>
   <style>
     :root {
       color-scheme: light;
@@ -406,6 +407,55 @@
       font-size: 13px;
       color: var(--text-muted);
       margin-top: 6px;
+    }
+
+    #fotos-input {
+      font-size: 13px;
+    }
+
+    .fotos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .foto-thumb {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+      aspect-ratio: 1 / 1;
+    }
+
+    .foto-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .foto-thumb__remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foto-thumb__remove:hover {
+      background: rgba(200, 40, 40, 0.9);
     }
 
     .checkbox-list {
@@ -1264,6 +1314,55 @@
       font-weight: 600;
     }
 
+    .hist-item__fotos {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .hist-item__fotos .lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .hist-item__fotos .fotos-grid {
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      margin-top: 0;
+    }
+
+    .hist-foto {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+    }
+
+    .foto-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+    }
+
+    .foto-modal.show {
+      display: flex;
+    }
+
+    .foto-modal img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+    }
+
     .hist-item__actions {
       display: flex;
       gap: 8px;
@@ -1609,6 +1708,13 @@
         <textarea id="observaciones" name="observaciones" placeholder="Comentarios adicionales (opcional)"></textarea>
       </div>
 
+      <div class="field" id="fotos-field">
+        <label for="fotos-input">FOTOS DEL RECAMBIO</label>
+        <input type="file" id="fotos-input" name="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+        <div class="fotos-grid" id="fotos-grid"></div>
+        <div class="field-hint">Adjunta hasta 5 fotos del recambio o repuesto (JPG, PNG o WEBP, máx. 5 MB c/u).</div>
+      </div>
+
       <button type="submit" class="btn-submit">ENVIAR SOLICITUD</button>
     </form>
 
@@ -1797,6 +1903,10 @@
 
   <div class="toast" id="toast"></div>
 
+  <div class="foto-modal" id="foto-modal">
+    <img id="foto-modal-img" src="" alt="Foto ampliada">
+  </div>
+
   <script>
     const THEME_KEY = "recambio_theme";
     const THEMES = [
@@ -1871,14 +1981,72 @@
 
     const STORAGE_KEY = "recambio_options_v2";
     const HISTORIAL_KEY = "recambio_solicitudes";
+    const PB_URL = "http://localhost:8090";
+    const pb = (typeof PocketBase !== "undefined") ? new PocketBase(PB_URL) : null;
     const DEFAULT_OPTIONS = {
-      turno: [],
-      supervisor: [],
-      area: [],
+      turno: [
+        "Turno 1 (07:00 - 15:00)",
+        "Turno 2 (15:00 - 23:00)",
+        "Turno 3 (23:00 - 07:00)"
+      ],
+      supervisor: [
+        "Juan Pérez",
+        "María González",
+        "Carlos Rodríguez",
+        "Ana Torres"
+      ],
+      area: [
+        "Línea 1 - Envasado",
+        "Línea 2 - Corte",
+        "Planta Fría",
+        "Mantención"
+      ],
       recambio: [],
-      recambioPorArea: {},
+      recambioPorArea: {
+        "Línea 1 - Envasado": [
+          "Cinta transportadora",
+          "Selladora",
+          "Boquilla de llenado",
+          "Rodillo"
+        ],
+        "Línea 2 - Corte": [
+          "Cuchilla de corte",
+          "Banda de sierra",
+          "Motorreductor",
+          "Sensor de posición"
+        ],
+        "Planta Fría": [
+          "Compresor",
+          "Válvula de refrigeración",
+          "Termostato",
+          "Motor ventilador"
+        ],
+        "Mantención": [
+          "Rodamiento",
+          "Correa",
+          "Filtro hidráulico",
+          "Sello mecánico"
+        ]
+      },
       talla: [],
-      tallaPorRecambio: {}
+      tallaPorRecambio: {
+        "Cinta transportadora": ["3 m", "5 m", "8 m"],
+        "Selladora": ["Estándar", "Industrial"],
+        "Boquilla de llenado": ["10 mm", "16 mm", "20 mm"],
+        "Rodillo": ["40 mm", "60 mm"],
+        "Cuchilla de corte": ["250 mm", "350 mm"],
+        "Banda de sierra": ["3.4 m", "4.5 m"],
+        "Motorreductor": ["0.5 HP", "1 HP", "2 HP"],
+        "Sensor de posición": ["Estándar", "Inalámbrico"],
+        "Compresor": ["3 HP", "5 HP", "7.5 HP"],
+        "Válvula de refrigeración": ["1/2\"", "3/4\"", "1\""],
+        "Termostato": ["Digital", "Mecánico"],
+        "Motor ventilador": ["220V", "380V"],
+        "Rodamiento": ["6204", "6205", "6306"],
+        "Correa": ["A-38", "B-42", "C-55"],
+        "Filtro hidráulico": ["10 µm", "25 µm"],
+        "Sello mecánico": ["20 mm", "25 mm", "30 mm"]
+      }
     };
 
     const form = document.getElementById("recambio-form");
@@ -1930,13 +2098,26 @@
       return opts;
     }
 
+    function isEmptyOptions(o) {
+      return (!o.turno || o.turno.length === 0) &&
+             (!o.supervisor || o.supervisor.length === 0) &&
+             (!o.area || o.area.length === 0) &&
+             (!o.recambio || o.recambio.length === 0) &&
+             (!o.recambioPorArea || Object.keys(o.recambioPorArea).length === 0);
+    }
+
     function loadOptions() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        return normalizeOptions(Object.assign({}, DEFAULT_OPTIONS, saved));
-      } catch (e) {
-        return normalizeOptions(Object.assign({}, DEFAULT_OPTIONS));
-      }
+        if (saved && !isEmptyOptions(saved)) {
+          return normalizeOptions(Object.assign({}, DEFAULT_OPTIONS, saved));
+        }
+      } catch (e) {}
+      const demo = normalizeOptions(Object.assign({}, DEFAULT_OPTIONS));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(demo));
+      } catch (e2) {}
+      return demo;
     }
 
     function saveOptions(options) {
@@ -2487,17 +2668,113 @@
     const histFiltroArea = document.getElementById("hist-filtro-area");
     const histFiltroTurno = document.getElementById("hist-filtro-turno");
 
+    let solicitudesCache = null;
+
     function loadSolicitudes() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(HISTORIAL_KEY));
-        return Array.isArray(saved) ? saved : [];
-      } catch (e) {
-        return [];
+      if (solicitudesCache === null) {
+        try {
+          const saved = JSON.parse(localStorage.getItem(HISTORIAL_KEY));
+          solicitudesCache = Array.isArray(saved) ? saved : [];
+        } catch (e) {
+          solicitudesCache = [];
+        }
       }
+      return solicitudesCache;
     }
 
     function saveSolicitudes(list) {
-      localStorage.setItem(HISTORIAL_KEY, JSON.stringify(list));
+      solicitudesCache = list;
+      try {
+        localStorage.setItem(HISTORIAL_KEY, JSON.stringify(list));
+      } catch (e) {}
+      syncSolicitudesToPB();
+    }
+
+    async function syncSolicitudesToPB() {
+      if (!pb) return;
+      const list = loadSolicitudes();
+      const remoteIds = {};
+      try {
+        const records = await pb.collection("solicitudes").getFullList();
+        records.forEach(function (r) { remoteIds[r.id] = true; });
+        const localIds = {};
+        list.forEach(function (s) {
+          localIds[s.id] = true;
+          if (!s.id) {
+            s._pending = true;
+          }
+        });
+        records.forEach(function (r) {
+          if (!localIds[r.id]) {
+            pb.collection("solicitudes").delete(r.id).catch(function () {});
+          }
+        });
+        list.forEach(function (s) {
+          if (s._pending) {
+            const fd = new FormData();
+            fd.append("numero", s.numero || "");
+            fd.append("fecha", s.fecha || "");
+            fd.append("turno", s.turno || "");
+            fd.append("supervisor", s.supervisor || "");
+            fd.append("area", s.area || "");
+            fd.append("nombre", s.nombre || "");
+            fd.append("recambios", JSON.stringify(s.recambios || []));
+            fd.append("tallas", JSON.stringify(s.tallas || {}));
+            fd.append("observaciones", s.observaciones || "");
+            (s.fotos || []).forEach(function (dataUrl, i) {
+              try {
+                fd.append("fotos", dataUrlToBlob(dataUrl), "foto" + (i + 1) + ".jpg");
+              } catch (e) {}
+            });
+            pb.collection("solicitudes").create(fd).then(function (created) {
+              s.id = created.id;
+              delete s._pending;
+              persistLocalSolicitudes();
+            }).catch(function () {});
+          }
+        });
+      } catch (e) {}
+    }
+
+    function persistLocalSolicitudes() {
+      try {
+        localStorage.setItem(HISTORIAL_KEY, JSON.stringify(solicitudesCache));
+      } catch (e) {}
+    }
+
+    async function loadSolicitudesFromPB() {
+      if (!pb) return;
+      try {
+        const records = await pb.collection("solicitudes").getFullList({ sort: "-fecha" });
+        const remoteList = records.map(function (r) {
+          const fotos = (r.fotos || []).map(function (fn) {
+            try { return pb.files.getURL ? pb.files.getURL(r, fn) : pb.files.getUrl(r, fn); } catch (e) { return ""; }
+          });
+          return {
+            id: r.id,
+            numero: r.numero,
+            fecha: r.fecha,
+            turno: r.turno,
+            supervisor: r.supervisor,
+            area: r.area,
+            nombre: r.nombre,
+            recambios: r.recambios,
+            tallas: r.tallas,
+            observaciones: r.observaciones,
+            fotos: fotos
+          };
+        });
+        const remoteIds = {};
+        remoteList.forEach(function (s) { remoteIds[s.id] = true; });
+        const localList = loadSolicitudes();
+        const pendingLocal = localList.filter(function (s) { return !s.id; });
+        solicitudesCache = remoteList.concat(pendingLocal);
+        persistLocalSolicitudes();
+        updateHistoryBadge();
+        renderHistList();
+      } catch (e) {
+        syncSolicitudesToPB();
+      }
     }
 
     function generarNumeroSolicitud() {
@@ -2604,6 +2881,13 @@
           return '<span class="chip">' + r + talla + '</span>';
         }).join("");
 
+        const fotosHtml = (s.fotos || []).filter(function (f) { return f; }).map(function (f) {
+          return '<img class="hist-foto" src="' + f + '" alt="Foto recambio" loading="lazy">';
+        }).join("");
+        const fotosBlock = fotosHtml
+          ? '<div class="hist-item__fotos"><div class="lbl">Fotos</div><div class="fotos-grid">' + fotosHtml + '</div></div>'
+          : "";
+
         return '<div class="hist-item">' +
           '<div class="hist-item__head">' +
             '<span class="hist-item__num">' + (s.numero || "SR-") + '</span>' +
@@ -2617,8 +2901,9 @@
             (s.observaciones ? '<div class="row full"><span class="k">Obs:</span><span class="v">' + s.observaciones + '</span></div>' : "") +
           '</div>' +
           '<div class="hist-item__recambios"><div class="lbl">Recambios</div><div class="chips">' + recambiosHtml + '</div></div>' +
+          fotosBlock +
           '<div class="hist-item__actions">' +
-            '<button type="button" class="btn-del" data-del="' + idx + '">Eliminar</button>' +
+            '<button type="button" class="btn-del" data-del="' + idx + '" data-pb-id="' + (s.id || "") + '">Eliminar</button>' +
           '</div>' +
         '</div>';
       }).join("");
@@ -2630,6 +2915,10 @@
           const item = list[idx];
           if (!item) return;
           if (!confirm("¿Eliminar la solicitud " + (item.numero || "") + "?")) return;
+          const pbId = btn.getAttribute("data-pb-id");
+          if (pb && pbId) {
+            pb.collection("solicitudes").delete(pbId).catch(function () {});
+          }
           list.splice(idx, 1);
           saveSolicitudes(list);
           updateHistoryBadge();
@@ -2637,7 +2926,19 @@
           toast("Solicitud eliminada", "ok");
         });
       });
+
+      historyList.querySelectorAll(".hist-foto").forEach(function (img) {
+        img.addEventListener("click", function () {
+          document.getElementById("foto-modal-img").src = img.src;
+          document.getElementById("foto-modal").classList.add("show");
+        });
+      });
     }
+
+    const fotoModal = document.getElementById("foto-modal");
+    fotoModal.addEventListener("click", function () {
+      fotoModal.classList.remove("show");
+    });
 
     function fillHistFiltros() {
       histFiltroArea.innerHTML = '<option value="">Todas las áreas</option>';
@@ -2732,6 +3033,12 @@
       const list = loadSolicitudes();
       if (list.length === 0) return;
       if (!confirm("¿Vaciar todo el historial de solicitudes? Esta acción no se puede deshacer.")) return;
+      if (pb) {
+        pb.collection("solicitudes").getFullList().then(function (records) {
+          const deletes = records.map(function (r) { return pb.collection("solicitudes").delete(r.id); });
+          return Promise.all(deletes);
+        }).catch(function () {});
+      }
       saveSolicitudes([]);
       updateHistoryBadge();
       renderHistList();
@@ -2804,7 +3111,8 @@
         nombre: nombre.value.trim(),
         recambios: selectedRecambios,
         tallas: getTallasSeleccionadas(),
-        observaciones: document.getElementById("observaciones").value.trim()
+        observaciones: document.getElementById("observaciones").value.trim(),
+        fotos: fotosSeleccionadas.map(function (f) { return f.dataUrl; })
       };
 
       const list = loadSolicitudes();
@@ -2825,6 +3133,8 @@
       renderRecambioCheckboxes();
       renderTallaRows();
       document.getElementById("observaciones").value = "";
+      fotosSeleccionadas = [];
+      renderFotosGrid();
     });
 
     /* ============ MEJORAS: Barra de Progreso y Resumen ============ */
@@ -2834,6 +3144,87 @@
     const resumenPanel = document.getElementById("resumen-panel");
     const resumenGrid = document.getElementById("resumen-grid");
     const observaciones = document.getElementById("observaciones");
+
+    /* ============ FOTOS DEL RECAMBIO ============ */
+    const fotosInput = document.getElementById("fotos-input");
+    const fotosGrid = document.getElementById("fotos-grid");
+    const MAX_FOTOS = 5;
+    let fotosSeleccionadas = [];
+
+    function comprimirImagen(dataUrl, cb) {
+      const img = new Image();
+      img.onload = function () {
+        const MAX = 900;
+        let w = img.width, h = img.height;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        cb(canvas.toDataURL("image/jpeg", 0.7));
+      };
+      img.onerror = function () { cb(dataUrl); };
+      img.src = dataUrl;
+    }
+
+    function dataUrlToBlob(dataUrl) {
+      const parts = dataUrl.split(",");
+      const mime = (parts[0].match(/:(.*?);/) || [])[1] || "image/jpeg";
+      const bin = atob(parts[1]);
+      const arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      return new Blob([arr], { type: mime });
+    }
+
+    function renderFotosGrid() {
+      fotosGrid.innerHTML = "";
+      fotosSeleccionadas.forEach(function (foto, i) {
+        const div = document.createElement("div");
+        div.className = "foto-thumb";
+        const img = document.createElement("img");
+        img.src = foto.dataUrl;
+        img.alt = "Foto " + (i + 1);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "foto-thumb__remove";
+        btn.textContent = "×";
+        btn.title = "Quitar foto";
+        btn.addEventListener("click", function () {
+          fotosSeleccionadas.splice(i, 1);
+          renderFotosGrid();
+        });
+        div.appendChild(img);
+        div.appendChild(btn);
+        fotosGrid.appendChild(div);
+      });
+    }
+
+    fotosInput.addEventListener("change", function () {
+      const files = Array.from(fotosInput.files || []);
+      files.forEach(function (file) {
+        if (fotosSeleccionadas.length >= MAX_FOTOS) {
+          toast("Máximo " + MAX_FOTOS + " fotos por solicitud", "err");
+          return;
+        }
+        if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
+          toast(file.name + ": solo JPG, PNG o WEBP", "err");
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          toast(file.name + " supera los 5 MB", "err");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          comprimirImagen(e.target.result, function (mini) {
+            fotosSeleccionadas.push({ name: file.name, dataUrl: mini });
+            renderFotosGrid();
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+      fotosInput.value = "";
+    });
 
     function calcularProgreso() {
       let total = 0, completados = 0;
@@ -2917,6 +3308,7 @@
     renderRecambioCheckboxes();
     renderTallaRows();
     updateHistoryBadge();
+    loadSolicitudesFromPB();
   </script>
 </body>
 </html>
