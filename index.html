@@ -1981,7 +1981,7 @@
 
     const STORAGE_KEY = "recambio_options_v2";
     const HISTORIAL_KEY = "recambio_solicitudes";
-    const PB_URL = "http://localhost:8090";
+    const PB_URL = "http://localhost:8090"; // Cambiar a la URL del servidor PocketBase en producción
     const pb = (typeof PocketBase !== "undefined") ? new PocketBase(PB_URL) : null;
     const DEFAULT_OPTIONS = {
       turno: [
